@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '../views/LoginView';
 import TaskView from '../views/TaskView';
+import TaskList from '../components/Task/TaskList';
+import TaskForm from '../components/Task/TaskForm';
 import store from '../store';
-
 const routes = [
     {
         path: '/login',
@@ -16,12 +17,45 @@ const routes = [
         path: '/',
         name: 'Home',
         component: TaskView,
+        redirect: { name: 'Tasks' },
         meta: {
             requiresAuth: true,
         },
+        children: [
+            {
+                path: '/my-tasks',
+                name: 'Tasks',
+                component: TaskList,
+                meta: {
+                    requiresAuth: true,
+                },
+            },
+            {
+                path: 'add-task',
+                name: 'AddTask',
+                component: TaskForm,
+                meta: {
+                    requiresAuth: true,
+                },
+            },
+
+        ],
+
     },
+    {
+        path: '/logout',
+        name: 'Logout',
+        meta: {
+            requiresAuth: true,
+        },
+        beforeEnter(to, from, next) {
+            store.dispatch('logout');
+            next('/login');
+        },
+
+    }
 ];
- export const router = createRouter({
+export const router = createRouter({
     history: createWebHistory(),
     routes,
 });

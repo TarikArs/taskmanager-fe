@@ -9,6 +9,7 @@ const store = createStore({
     state: {
         tasks: [],
         authToken: localStorage.getItem(AUTH_TOKEN_KEY),
+        loading: false,
     },
     mutations: {
         SET_TASKS(state, tasks) {
@@ -17,6 +18,9 @@ const store = createStore({
         SET_AUTH_TOKEN(state, token) {
             state.authToken = token;
             localStorage.setItem(AUTH_TOKEN_KEY, token);
+        },
+        SET_LOADING(state, isloading) {
+            state.loading = isloading;
         },
         LOGOUT(state) {
             state.authToken = null;
@@ -36,6 +40,7 @@ const store = createStore({
         },
         async fetchTasks({ commit }) {
             try {
+                commit('SET_LOADING', true);
                 const response = await api.get('/tasks', {
                     headers: {
                         Authorization: `Bearer ${this.state.authToken}`,
@@ -44,10 +49,28 @@ const store = createStore({
                 commit('SET_TASKS', response.data);
             } catch (error) {
                 console.error('Fetch tasks error:', error);
+            } finally {
+                commit('SET_LOADING', false);
+            }
+        },
+        async addTask({ dispatch }, task) {
+            try {
+                this.commit('SET_LOADING', true);
+                await api.post('/tasks', task, {
+                    headers: {
+                        Authorization: `Bearer ${this.state.authToken}`,
+                    },
+                });
+                dispatch('fetchTasks'); // Refresh task list after addition
+            } catch (error) {
+                console.error('Add task error:', error);
+            } finally {
+                this.commit('SET_LOADING', false);
             }
         },
         async deleteTask({ dispatch }, taskId) {
             try {
+                this.commit('SET_LOADING', true);
                 await api.delete(`/tasks/${taskId}`, {
                     headers: {
                         Authorization: `Bearer ${this.state.authToken}`,
@@ -56,11 +79,14 @@ const store = createStore({
                 dispatch('fetchTasks'); // Refresh task list after deletion
             } catch (error) {
                 console.error('Delete task error:', error);
+            } finally {
+                this.commit('SET_LOADING', false);
             }
         },
-        async updateTaskStatus({ dispatch }, { taskId, newStatus }) {
+        async updateTaskStatus({ dispatch }, { id, status }) {
             try {
-                await api.put(`/tasks/${taskId}`, { status: newStatus }, {
+                this.commit('SET_LOADING', true);
+                await api.put(`/tasks/${id}`,{status}, {
                     headers: {
                         Authorization: `Bearer ${this.state.authToken}`,
                     },
@@ -68,10 +94,13 @@ const store = createStore({
                 dispatch('fetchTasks'); // Refresh task list after status update
             } catch (error) {
                 console.error('Update task status error:', error);
+            } finally {
+                this.commit('SET_LOADING', false);
             }
         },
         async logout({ commit }) {
             try {
+                commit('SET_LOADING', true);
                 await api.post('/auth/logout', {}, {
                     headers: {
                         Authorization: `Bearer ${this.state.authToken}`,
@@ -80,6 +109,8 @@ const store = createStore({
                 commit('LOGOUT');
             } catch (error) {
                 console.error('Logout error:', error);
+            } finally {
+                commit('SET_LOADING', false);
             }
         },
     },
