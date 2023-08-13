@@ -1,14 +1,17 @@
+// Import Vue Router and required components
 import { createRouter, createWebHistory } from 'vue-router';
-import LoginView from '../views/LoginView';
-import TaskView from '../views/TaskView';
+import LandingView from '../views/LandingView';
+import HomeView from '../views/HomeView';
 import TaskList from '../components/Task/TaskList';
-import TaskForm from '../components/Task/TaskForm';
+import AddTask from '../components/Task/AddTask';
 import store from '../store';
+
+// Define routes for the application
 const routes = [
     {
         path: '/login',
         name: 'Login',
-        component: LoginView,
+        component: LandingView,
         meta: {
             requiresAuth: false,
         },
@@ -16,7 +19,7 @@ const routes = [
     {
         path: '/',
         name: 'Home',
-        component: TaskView,
+        component: HomeView,
         redirect: { name: 'Tasks' },
         meta: {
             requiresAuth: true,
@@ -33,14 +36,12 @@ const routes = [
             {
                 path: 'add-task',
                 name: 'AddTask',
-                component: TaskForm,
+                component: AddTask,
                 meta: {
                     requiresAuth: true,
                 },
             },
-
         ],
-
     },
     {
         path: '/logout',
@@ -48,23 +49,24 @@ const routes = [
         meta: {
             requiresAuth: true,
         },
+        // Custom route guard using beforeEnter
         beforeEnter(to, from, next) {
             store.dispatch('logout');
             next('/login');
         },
-
-    }
+    },
 ];
+
+// Create the Vue Router instance
 export const router = createRouter({
     history: createWebHistory(),
     routes,
 });
 
+// Global navigation guard to handle authentication
 router.beforeEach((to, from, next) => {
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
     const isAuthenticated = store.getters.isAuthenticated;
-    console.log('requiresAuth:', requiresAuth, 'isAuthenticated:', isAuthenticated);
-
     if (requiresAuth && !isAuthenticated) {
         // Redirect to login if authentication is required and user is not authenticated
         next('/login');

@@ -1,8 +1,7 @@
 <template>
     <div>
         <h2 class="text-xl font-semibold mb-4">
-            <span v-if="!this.$store.state.loading">Task list</span>
-            <div v-if="this.$store.state.loading"
+            <div v-if="loading"
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status">
                 <span
@@ -10,21 +9,24 @@
             </div>
         </h2>
         <div class="grid grid-cols-12 gap-4">
-            <task-card v-for="task in tasks" :key="task.id" :task="task" class="col-span-3 h-[200px]" />
+            <single-task-card v-for="task in tasks" :key="task.id" :task="task" class="col-span-3 h-[250px]" />
         </div>
     </div>
 </template>
   
 <script>
 import { mapGetters } from 'vuex';
-import TaskCard from './TaskCard.vue';
+import SingleTaskCard from './SingleTaskCard.vue';
 
 export default {
     components: {
-        TaskCard,
+        SingleTaskCard,
     },
     computed: {
         ...mapGetters(['getTasks']),
+        loading() {
+            return this.$store.state.loading;
+        },
         tasks() {
             return this.getTasks;
         },

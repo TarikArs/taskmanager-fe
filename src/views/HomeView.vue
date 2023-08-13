@@ -17,7 +17,7 @@ export default {
         TaskFooter,
     },
     created() {
-        if (this.$store.getters.isAuthenticated) {
+        if (!this.$store.getters.isAuthenticated) {
             router.push('/login');
         }
     },

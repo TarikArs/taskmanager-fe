@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
+import router from '@/router';
 
 const api = axios.create({
     baseURL: 'http://127.0.0.1:8000/api',
@@ -25,13 +26,13 @@ const store = createStore({
         LOGOUT(state) {
             state.authToken = null;
             localStorage.removeItem(AUTH_TOKEN_KEY);
+            router.push({ name: 'Login' });
         },
     },
     actions: {
         async login({ commit }, { email, password }) {
             try {
                 const response = await api.post('/auth/login', { email, password });
-                console.log('Login response:', response);
                 const token = response.data.token;
                 commit('SET_AUTH_TOKEN', token);
             } catch (error) {
@@ -48,6 +49,9 @@ const store = createStore({
                 });
                 commit('SET_TASKS', response.data);
             } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    commit('LOGOUT');
+                }
                 console.error('Fetch tasks error:', error);
             } finally {
                 commit('SET_LOADING', false);
@@ -63,9 +67,13 @@ const store = createStore({
                 });
                 dispatch('fetchTasks'); // Refresh task list after addition
             } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    this.commit('LOGOUT');
+                }
+                if (error.response) {
+                    return Promise.reject(error.response.data);
+                }
                 console.error('Add task error:', error);
-            } finally {
-                this.commit('SET_LOADING', false);
             }
         },
         async deleteTask({ dispatch }, taskId) {
@@ -78,24 +86,26 @@ const store = createStore({
                 });
                 dispatch('fetchTasks'); // Refresh task list after deletion
             } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    this.commit('LOGOUT');
+                }
                 console.error('Delete task error:', error);
-            } finally {
-                this.commit('SET_LOADING', false);
             }
         },
         async updateTaskStatus({ dispatch }, { id, status }) {
             try {
                 this.commit('SET_LOADING', true);
-                await api.put(`/tasks/${id}`,{status}, {
+                await api.put(`/tasks/${id}`, { status }, {
                     headers: {
                         Authorization: `Bearer ${this.state.authToken}`,
                     },
                 });
                 dispatch('fetchTasks'); // Refresh task list after status update
             } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    this.commit('LOGOUT');
+                }
                 console.error('Update task status error:', error);
-            } finally {
-                this.commit('SET_LOADING', false);
             }
         },
         async logout({ commit }) {
@@ -108,6 +118,9 @@ const store = createStore({
                 });
                 commit('LOGOUT');
             } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    commit('LOGOUT');
+                }
                 console.error('Logout error:', error);
             } finally {
                 commit('SET_LOADING', false);

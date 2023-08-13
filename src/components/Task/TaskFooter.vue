@@ -1,8 +1,8 @@
 <template>
     <div>
-      <footer class="bg-purple-500 text-white py-4 px-6 absolute bottom-0 w-full">
+      <footer class="bg-purple-200 text-gray-800 py-2 px-2 absolute bottom-0 w-full">
         <div class="container mx-auto">
-          <p>&copy; 2023 Your Company. All rights reserved.</p>
+          <p>&copy; Groove.cm test by Tarik SALHI - tariksalhiars@gmail.com</p>
         </div>
       </footer>
     </div>
