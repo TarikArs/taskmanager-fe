@@ -142,7 +142,7 @@ const store = createStore({
         isAuthenticated(state) {
             return !!state.authToken;
         },
-        // Other getters
+        
     },
 });
 
