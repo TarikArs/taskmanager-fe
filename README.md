@@ -1,24 +1,14 @@
-# fe
+## Prerequisites
+- node.js
 
-## Project setup
-```
-npm install
-```
+## Installation
+1. Clone the repository from GitHub
+2. npm install
+3. npm run serve
+4. If you need to change the backend API URL, you can modify the API_URL constant in the constants/constants.js file. 
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Demo account
+- Email: `demo@groove.cm`
+- Password: `password`
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+That's it! You can now access the application at http://localhost:8080

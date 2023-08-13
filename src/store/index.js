@@ -1,9 +1,10 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
 import router from '@/router';
+import { API_URL } from '@/constants/constants';
 
 const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api',
+    baseURL: API_URL,
 });
 const AUTH_TOKEN_KEY = 'authToken';
 const store = createStore({
@@ -67,6 +68,7 @@ const store = createStore({
                 });
                 dispatch('fetchTasks'); // Refresh task list after addition
             } catch (error) {
+                this.commit('SET_LOADING', false);
                 if (error.response && error.response.status === 401) {
                     this.commit('LOGOUT');
                 }
@@ -86,6 +88,8 @@ const store = createStore({
                 });
                 dispatch('fetchTasks'); // Refresh task list after deletion
             } catch (error) {
+                this.commit('SET_LOADING', false);
+
                 if (error.response && error.response.status === 401) {
                     this.commit('LOGOUT');
                 }
@@ -102,8 +106,12 @@ const store = createStore({
                 });
                 dispatch('fetchTasks'); // Refresh task list after status update
             } catch (error) {
+                this.commit('SET_LOADING', false);
                 if (error.response && error.response.status === 401) {
                     this.commit('LOGOUT');
+                }
+                if (error.response) {
+                    return Promise.reject(error.response.data);
                 }
                 console.error('Update task status error:', error);
             }

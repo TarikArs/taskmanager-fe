@@ -32,7 +32,10 @@ export default {
         },
     },
     created() {
-        this.fetchTasks();
+        /** check if the tasks are already there before dispatch fetchtasks */
+        if (!this.tasks.length) {
+            this.fetchTasks();
+        }
     },
     methods: {
         async fetchTasks() {

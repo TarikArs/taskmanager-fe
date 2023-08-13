@@ -1,9 +1,7 @@
 <template>
-    <div>
-      <footer class="bg-purple-200 text-gray-800 py-2 px-2 absolute bottom-0 w-full">
-        <div class="container mx-auto">
-          <p>&copy; Groove.cm test by Tarik SALHI - tariksalhiars@gmail.com</p>
-        </div>
-      </footer>
+  <footer class="bg-white rounded-lg shadow m-4 dark:bg-gray-800">
+    <div class="w-full mx-auto max-w-screen-xl p-4 ">
+      <span class="text-sm text-gray-500">Tarik SALHI. tariksalhiars@gmail.com.</span>
     </div>
-  </template>
+  </footer>
+</template>
