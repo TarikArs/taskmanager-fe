@@ -1,12 +1,12 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
 import router from '@/router';
-import { API_URL } from '@/constants/constants';
+import { API_URL, AUTH_TOKEN_KEY } from '@/constants/constants';
 
 const api = axios.create({
     baseURL: API_URL,
 });
-const AUTH_TOKEN_KEY = 'authToken';
+
 const store = createStore({
     state: {
         tasks: [],
